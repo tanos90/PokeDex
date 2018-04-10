@@ -62,10 +62,6 @@ export default class PokemonList extends React.Component {
         let strings = stringId.split('/');
         return strings[strings.length - 2];
     };
-    hidePokemon = () =>
-        this.setState({
-            showPokemon: false
-        });
 
     render() {
         const { pokemons, pokemonDetails, showPokemon } = this.state;
