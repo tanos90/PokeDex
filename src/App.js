@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import PokemonList from './pokemonList.js';
-import { pokeAPI, API_URL } from './pokeAPI.js';
+import { pokeAPI } from './pokeAPI.js';
 import {
     Container,
     Divider,
-    Dropdown,
     Grid,
     Header,
     Sidebar,
@@ -21,15 +20,32 @@ import PokemonDetails from './pokemonDetail';
 export default class App extends React.Component {
     state = {
         showPokemon: false,
-        pokemonDetails: { sprites: { front_shiny: '' } }
+        pokemonDetails: {
+            sprites: { front_shiny: '' },
+            species: { color: { name: '' } },
+            topMoves: ''
+        }
     };
-    getPokemonDetail = url =>
+    getPokemonDetail = url => {
         pokeAPI.fetchPokemonDetail(url).then(response => {
+            const moves = this.getTopMoves(response.moves);
             this.setState({
-                pokemonDetails: response.data
+                pokemonDetails: {
+                    ...response,
+                    topMoves: moves
+                }
             });
-            this.showPokemonDetail();
         });
+
+        this.showPokemonDetail();
+    };
+
+    getTopMoves = moves =>
+        moves
+            .slice(0, 5)
+            .map(move => move.move.name)
+            .join(', ');
+
     hidePokemon = () =>
         this.setState({
             showPokemon: false
@@ -43,6 +59,7 @@ export default class App extends React.Component {
     };
     render() {
         const { pokemonDetails, showPokemon } = this.state;
+        console.log(pokemonDetails);
         return (
             <div>
                 <Menu fixed="top" inverted>
@@ -66,7 +83,7 @@ export default class App extends React.Component {
                     <Sidebar
                         as={Menu}
                         animation="overlay"
-                        width="thin"
+                        width="large"
                         direction="right"
                         visible={showPokemon}
                         icon="labeled"
@@ -104,9 +121,6 @@ export default class App extends React.Component {
                                     />
                                     <List link inverted>
                                         <List.Item as="a">Link One</List.Item>
-                                        <List.Item as="a">Link Two</List.Item>
-                                        <List.Item as="a">Link Three</List.Item>
-                                        <List.Item as="a">Link Four</List.Item>
                                     </List>
                                 </Grid.Column>
                                 <Grid.Column width={3}>
@@ -117,9 +131,6 @@ export default class App extends React.Component {
                                     />
                                     <List link inverted>
                                         <List.Item as="a">Link One</List.Item>
-                                        <List.Item as="a">Link Two</List.Item>
-                                        <List.Item as="a">Link Three</List.Item>
-                                        <List.Item as="a">Link Four</List.Item>
                                     </List>
                                 </Grid.Column>
                                 <Grid.Column width={3}>
@@ -130,9 +141,6 @@ export default class App extends React.Component {
                                     />
                                     <List link inverted>
                                         <List.Item as="a">Link One</List.Item>
-                                        <List.Item as="a">Link Two</List.Item>
-                                        <List.Item as="a">Link Three</List.Item>
-                                        <List.Item as="a">Link Four</List.Item>
                                     </List>
                                 </Grid.Column>
                                 <Grid.Column width={3}>
@@ -142,9 +150,8 @@ export default class App extends React.Component {
                                         content="Footer Header"
                                     />
                                     <p>
-                                        Extra space for a call to action inside
-                                        the footer that could help re-engage
-                                        users.
+                                        App created to check the stats of
+                                        pokemon.
                                     </p>
                                 </Grid.Column>
                             </Grid.Row>

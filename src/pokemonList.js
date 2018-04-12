@@ -1,18 +1,7 @@
 import React from 'react';
-import { pokeAPI, API_URL } from './pokeAPI.js';
+import { API_URL } from './pokeAPI.js';
 import Pokemon from './pokemon';
-import PokemonDetails from './pokemonDetail';
-import {
-    Table,
-    List,
-    Sidebar,
-    Segment,
-    Button,
-    Menu,
-    Image,
-    Icon,
-    Header
-} from 'semantic-ui-react';
+import { Table } from 'semantic-ui-react';
 import InfiniteScroll from 'react-infinite-scroller';
 import qwest from 'qwest';
 
@@ -20,7 +9,6 @@ export default class PokemonList extends React.Component {
     state = {
         pokemons: [],
         showPokemon: false,
-        pokemonDetails: { sprites: { front_shiny: '' } },
         hasMoreItems: true,
         nextHref: null
     };
@@ -28,7 +16,6 @@ export default class PokemonList extends React.Component {
     componentDidMount = () => {};
 
     getPokemons = page => {
-        console.log(page);
         let self = this;
         let url = `${API_URL}/pokemon`;
         if (this.state.nextHref) {
@@ -44,7 +31,6 @@ export default class PokemonList extends React.Component {
                         pokemons: pokemons,
                         nextHref: resp.next
                     });
-                    console.log(self.state);
                 } else {
                     self.setState({
                         hasMoreItems: false
@@ -64,9 +50,8 @@ export default class PokemonList extends React.Component {
     };
 
     render() {
-        const { pokemons, pokemonDetails, showPokemon } = this.state;
+        const { pokemons } = this.state;
         const loader = <div className="loader">Loading ...</div>;
-        console.log(this.props);
         let pokemonList = [];
         pokemons.map((pokemon, i) =>
             pokemonList.push(

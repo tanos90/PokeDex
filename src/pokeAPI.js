@@ -1,23 +1,27 @@
-import 'whatwg-fetch';
-import axios from 'axios';
+import qwest from 'qwest';
 import 'babel-polyfill';
 
-const API_URL = 'https://pokeapi.co/api/v2'; //The API_URL has moved into the constants file
-// const API_HEADERS = {
-//     'Content-Type': 'application/json',
-//     Authorization: 'any-string-you-like',
-//     'Access-Control-Allow-Origin': '*',
-//     'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-//     'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
-// };
+const API_URL = 'https://pokeapi.co/api/v2';
 
 let pokeAPI = {
     fetchPokemons() {
-        return axios.get(`${API_URL}/pokemon`);
+        return qwest.get(`${API_URL}/pokemon`, {}, { cache: true });
     },
 
     fetchPokemonDetail(url) {
-        return axios.get(url);
+        let details = {};
+        return new Promise((resolve, reject) => {
+            qwest
+                .get(url, {}, { cache: true })
+                .then((xhr, response) => {
+                    details = response;
+                    return qwest.get(response.species.url, {}, { cache: true });
+                })
+                .then((xhr, response) => {
+                    details.species = response;
+                    resolve(details);
+                });
+        });
     }
 };
 
